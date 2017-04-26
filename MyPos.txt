@@ -1,0 +1,200 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mypos;
+// Nerdy Gedoni
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+/**
+ *
+ * @author Nerdy
+ */
+public class MyPos {
+ private static final String username = "a";
+ private static final String password = "p";
+    /**
+     * @param args the command line arguments
+     */
+  
+    public static void main(String[] args) {
+        // TODO code application logic here
+        double balance = 0.0;
+		double startingBalance = 50.00;
+		Collection<Double> currentPurchasePricePer = new ArrayList();
+		Collection<Double> currentPurchaseTotal = new ArrayList();
+		Collection<Integer> currentPurchaseQuantity = new ArrayList();
+		Collection<String> currentPurchaseItemName = new ArrayList();
+		final int INITIAL_CAPACITY = 9; //capacity of the array
+		Scanner input = new Scanner(System.in);
+		int getInput;
+		String getUsername, getPassword;
+                mainLabel:
+                do {                    
+                    System.out.println("*********************************************************");
+                    System.out.println("Welcome to Gedoni's point of sales sytem app....");
+                    System.out.println("*********************************************************");
+                    System.out.println("----------------------");
+                    System.out.println("Press '1' Login");
+                    System.out.println("----------------------");
+                    
+                    getInput = input.nextInt();
+                    if (getInput == 1) {
+                        System.out.println("\n Enter username: ");
+			getUsername = input.next();
+			System.out.println("\nEnter password: ");
+			getPassword = input.next();
+                        
+                        
+                       // code to validate username and password
+			if (getUsername.equals(username) && getPassword.equals(password)) {
+                            //logged in
+			
+                            menuLabel: //menu label
+				do {
+				System.out.printf("\nWelcome\n");	
+                                System.out.println("==============================================");				
+            			System.out.println("1. Purchase Item");
+                                System.out.println("==============================================");
+                                System.out.println("2. Display current purchases");
+                                System.out.println("==============================================");
+                                System.out.println("3. Display account balance");
+                                System.out.println("==============================================");
+                                System.out.println("4. Complete transaction and exit.");
+                                System.out.println("==============================================");
+					getInput = input.nextInt();
+					
+                                       //menu control switch
+					switch(getInput){
+                                	case 1:
+					//display items and prices and make purchases
+                                        boolean go = true;
+						while(go){
+                                                HashMap items = new HashMap();
+						items.put("Hammer", 3.25);
+						items.put("Nails", 5.25);
+						items.put("Paint", 4.75);
+						items.put("Brush", 2.25);
+                                                
+						
+						Set set = items.entrySet();
+						// codes to loop through 
+                                                
+                                                
+                                                
+						Iterator iterate = set.iterator();
+                                                
+						//loop through to display values
+						System.out.println("\t\t Items  ====  Prices($)");
+						while(iterate.hasNext()){
+						Map.Entry mapEntry = (Map.Entry)iterate.next();
+                                                    System.out.println("\t================================");
+						System.out.println("\t\t "+mapEntry.getKey() +" ---- $"+ mapEntry.getValue()+" ");
+                                                    System.out.println("\t================================");
+							}
+						System.out.println("Input item name and type 'exit' to save the purchases");
+						String getItemInput = input.next();
+						getItemInput = getItemInput.toLowerCase();
+						getItemInput = getItemInput.substring(0, 1).toUpperCase() + getItemInput.substring(1).toLowerCase();
+						if (getItemInput.equals("exit")) {
+						go = false;
+						}
+                                        
+						else {
+						//check if the items exist
+						if (items.containsKey(getItemInput)) {
+						System.out.println("Enter Quantity");
+						int getsInput = input.nextInt();
+                                                
+						//display balance and request for final auth
+						System.out.println("Starting Balance: $"+startingBalance);
+                                                
+						//get quantity
+						 Double quantity = ((Double)items.get(getItemInput));
+                                                 
+						 //get balance
+						   balance = getsInput * quantity;
+                                                   
+						  //sets new starting balance
+										
+                                            startingBalance-= balance;
+                                            System.out.println("Cost of "+getsInput+" "+ getItemInput +" : $"+ balance +"\n balance: $"+ startingBalance);
+					    if (startingBalance <= 0.00) { //check if quantity price is more than balance
+					 	System.err.println("WARNING: YOU HAVE INSUFFICIENT FUNDS FOR\nTHIS PURCHASE. NO MUCH FUNDS FOR" + getInput +" "+ getItemInput);
+					   	
+					   	//resets accounts and return to main menu
+                                           	startingBalance = 50.00;
+                                                balance = 0.0;
+						getInput = 0;
+					      	getItemInput = "";
+					    	currentPurchaseItemName.clear();
+					      	currentPurchaseQuantity.clear();
+					    	currentPurchasePricePer.clear();
+					    	break menuLabel;
+							      }
+					      else { //continues with the purchase
+					   	System.out.println("Do You wish to continue with purchase? Y/N");
+						String choice = input.next(); //get input and check if y/n or invalid
+                                                    char charAt = choice.charAt(0); //checks for the first character inputted
+                                                    String substring = choice.substring(0, 1); //converts the character back to string 
+						if (choice.equalsIgnoreCase("y")) {
+                                                    
+						//storing all purchases made to collection class
+						currentPurchaseItemName.add(getItemInput);
+						currentPurchaseQuantity.add(getsInput);
+						currentPurchasePricePer.add(quantity);
+						currentPurchaseTotal.add(balance);
+						go = true;
+						}
+						else if (choice.equalsIgnoreCase("n")) {
+                                                    
+						//does not save the current purchase, lets you chose another item or quantity
+					  	startingBalance += balance;
+						go = false;
+						}
+						else break;
+						      }
+						}
+						else {
+						System.out.println("Not correct");
+						break;
+							}
+						}
+						}
+							continue;
+							case 2: //display current purchases
+							System.out.println("Display current purchases:\n");
+        						System.out.println("Item name:   "+currentPurchaseItemName +"\nQuantity: "+ currentPurchaseQuantity +"\nPrice Per: $"+ currentPurchasePricePer);
+								break;
+							case 3: //display the balance
+							System.out.println("Account Balance: "+startingBalance);
+								break;
+							case 4: //display final receipt and end the program
+							System.out.println("Display current purchases:\n");
+							System.out.println("Item name:   "+currentPurchaseItemName +"\nQuantity: "+ currentPurchaseQuantity +"\nPrice Per: "+ currentPurchasePricePer +"\nTotalPrice: "+ currentPurchaseTotal);
+							System.exit(0);
+								default:
+							System.out.println("Invalid\nTry again");
+								break;
+									}
+								}
+								while(true);
+						}
+						else continue;
+					}
+					
+					
+					else System.out.println("Invalid");
+				}
+				while (getInput !=2);
+	}
+    }
+    
+
